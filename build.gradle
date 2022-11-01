@@ -1,9 +1,10 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-group 'nl.bioinf.thema9'
-version '1.0-SNAPSHOT'
+group 'nl.bioinf.ljbhu.wrapperT9'
+version '0.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -12,6 +13,9 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    // https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/weka-stable
+    implementation group: 'nz.ac.waikato.cms.weka', name: 'weka-stable', version: '3.8.5'
+    implementation 'commons-cli:commons-cli:1.5.0'
 }
 
 test {

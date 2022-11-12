@@ -1,5 +1,7 @@
 package nl.bioinf.ljbhu.wrapperT9;
 
+import java.io.InputStream;
+
 import weka.classifiers.AbstractClassifier;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -9,18 +11,19 @@ import java.io.IOException;
 public class WekaRunner {
     private AbstractClassifier benignModel;
     private AbstractClassifier controlModel;
-    final String benignFile = "/benign.model";
-    final String controlFile = "/control.model";
+    final String benignFilename = "/benign.model";
+    final String controlFilename = "/control.model";
 
-    public WekaRunner(String inputFile) {
+    public WekaRunner(String inputFile) throws Exception {
         try {
             Instances newInstances = loadFile(inputFile);
             loadModel();
             System.out.println("\nUnclassified input instances = \n" + newInstances);
             classifyInput(benignModel, newInstances);
             classifyInput(controlModel, newInstances);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            throw new Exception(String.format("Given file could not be read: (%s) %s",
+                    exception.getClass().getSimpleName(), exception.getMessage()));
         }
     }
 
@@ -34,19 +37,27 @@ public class WekaRunner {
     }
 
     private void loadModel() throws Exception {
-        this.benignModel = (AbstractClassifier) weka.core.SerializationHelper.read(benignFile);
-        this.controlModel = (AbstractClassifier) weka.core.SerializationHelper.read(controlFile);
+        try {
+            InputStream benignFile = getClass().getResourceAsStream(benignFilename);
+            InputStream controlFile = getClass().getResourceAsStream(controlFilename);
+            this.benignModel = (AbstractClassifier) weka.core.SerializationHelper.read(benignFile);
+            this.controlModel = (AbstractClassifier) weka.core.SerializationHelper.read(controlFile);
+        } catch (Exception exception) {
+            throw new Exception(String.format("Given file could not be read: (%s) %s",
+                    exception.getClass().getSimpleName(), exception.getMessage()));
+        }
     }
 
-    private Instances loadFile(String datafile) throws IOException {
+    private Instances loadFile(String datafile) throws Exception {
         try {
             DataSource source = new DataSource(datafile);
             Instances data = source.getDataSet();
             if (data.classIndex() == -1)
                 data.setClassIndex(data.numAttributes() - 1);
             return data;
-        } catch (Exception e) {
-            throw new IOException("Could not read file");
+        } catch (Exception exception) {
+            throw new Exception(String.format("Given file could not be read: (%s) %s",
+                    exception.getClass().getSimpleName(), exception.getMessage()));
         }
     }
 }

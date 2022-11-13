@@ -1,4 +1,4 @@
-package nl.bioinf.ljbhu.wrapperT9;
+package nl.bioinf.ljbhu.WrapperT9;
 
 import org.apache.commons.cli.*;
 

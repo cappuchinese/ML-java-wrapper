@@ -13,7 +13,7 @@ import weka.core.converters.ConverterUtils.DataSource;
 /**
  * This class classifies the instances based on the two models.
  * Models are based on the Logistic algorithm and optimized using ThresholdSelector.
- * @author Lisa Hu (414264)
+ * @author Lisa Hu (l.j.b.hu@st.hanze.nl)
  */
 public class WekaRunner {
     private AbstractClassifier benignModel;
@@ -23,7 +23,7 @@ public class WekaRunner {
     private Instances comparedClassified;
 
     /**
-     * Constructor method to run all the methods in the class.
+     * Constructor method.
      * @param inputFile path to the unclassified instances
      */
     public WekaRunner(String inputFile) {
@@ -45,11 +45,20 @@ public class WekaRunner {
         }
     }
 
+    /**
+     * Classify the unclassified instances based on the loaded predictive model.
+     * @param model the predictive model.
+     * @param unknownInstances  all the instances that need to be classified
+     * @return the classified instances
+     */
     private Instances classifyInput(AbstractClassifier model, Instances unknownInstances) {
+        // Create a new Instances object for the labeled instances
         Instances labeledInstances = new Instances(unknownInstances);
         try {
+            // Classify each instance
             for (int i = 0; i < unknownInstances.numInstances(); i++) {
                  double clsLabel = model.classifyInstance(unknownInstances.instance(i));
+                 // Set the instance to the classification label
                  labeledInstances.instance(i).setClassValue(clsLabel);
             }
         } catch (Exception exception) {
@@ -60,6 +69,12 @@ public class WekaRunner {
         return labeledInstances;
     }
 
+    /**
+     * Creates a new Instances object that puts the same instance from the different model underneath each other
+     * for easier comparison. Stores the comparison as class attribute.
+     * @param controlClassified the classified instances from the control model
+     * @param benignClassified the classified instances from the benign model
+     */
     private void compareInstances(Instances controlClassified, Instances benignClassified) {
         try {
             for (int i = 0; i < controlClassified.numInstances(); i++) {
@@ -73,10 +88,15 @@ public class WekaRunner {
         }
     }
 
+    /**
+     * Load the models and store as class attribute
+     */
     private void loadModel() {
         try {
+            // Get the model files
             InputStream benignFile = getClass().getResourceAsStream(benignFilename);
             InputStream controlFile = getClass().getResourceAsStream(controlFilename);
+            // Read the models
             this.benignModel = (AbstractClassifier) weka.core.SerializationHelper.read(benignFile);
             this.controlModel = (AbstractClassifier) weka.core.SerializationHelper.read(controlFile);
         } catch (Exception exception) {
@@ -86,6 +106,12 @@ public class WekaRunner {
         }
     }
 
+    /**
+     * Loads the unclassified instances from the file. Creates the structure for comparedClassified.
+     * @param datafile path to the file with unclassified instances
+     * @return loaded instances
+     * @throws Exception if the path to the file is invalid
+     */
     private Instances loadFile(String datafile) throws Exception {
         try {
             // Load data
@@ -114,6 +140,10 @@ public class WekaRunner {
         }
     }
 
+    /**
+     * Getter method for the class attribute comparedClassified
+     * @return class attribute comparedClassified
+     */
     public Instances getComparedClassified() {
         return comparedClassified;
     }

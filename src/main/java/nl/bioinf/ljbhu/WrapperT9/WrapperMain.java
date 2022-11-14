@@ -6,8 +6,15 @@ import weka.core.converters.ConverterUtils.DataSink;
 import static java.util.Objects.isNull;
 
 public class WrapperMain {
+    /**
+     * Constructor method. Private because it should not be used.
+     */
     private WrapperMain() {}
 
+    /**
+     * Main method.
+     * @param args commandline arguments
+     */
     public static void main(String[] args) {
         ApacheCliOptionsProvider optionsProvider = new ApacheCliOptionsProvider(args);
         try {
@@ -35,6 +42,12 @@ public class WrapperMain {
                     exception.getClass().getSimpleName(), exception.getMessage())));
         }
     }
+
+    /**
+     * Writes an output file
+     * @param outputFile path/name of the output file
+     * @param classifiedData the classified instances from the WekaRunner
+     */
     private static void outputWriter(String outputFile, Instances classifiedData) {
         try {
             DataSink.write(outputFile, classifiedData);
